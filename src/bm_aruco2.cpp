@@ -13,7 +13,7 @@ cv::Mat resize(const cv::Mat &in,int width){
     
 }
 
-int getposes(MarkerDetector MDetector, VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int debugwin) {
+int getposes(MarkerDetector MDetector, VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, int debugwin) {
     Mat TheInputImage, TheInputImageCopy;
     Mat rotation;float angle;
     vector< Marker > TheMarkers;
@@ -36,6 +36,7 @@ int getposes(MarkerDetector MDetector, VideoCapture TheVideoCapturer, CameraPara
             // print marker info and draw the markers in image
             TheInputImage.copyTo(TheInputImageCopy);
             
+            *nTags = TheMarkers.size();
             for (unsigned int i = 0; i < TheMarkers.size(); i++) {
                 Rodrigues(TheMarkers[i].Rvec, rotation);
                 angle = atan2(-rotation.at<float>(0, 1), rotation.at<float>(0, 0));
@@ -43,7 +44,7 @@ int getposes(MarkerDetector MDetector, VideoCapture TheVideoCapturer, CameraPara
                     p2d[TheMarkers[i].id-1].x=TheMarkers[i].Tvec.at<float>(0);
                     p2d[TheMarkers[i].id-1].y=TheMarkers[i].Tvec.at<float>(1);
                     p2d[TheMarkers[i].id-1].theta=angle;
-                    /*cout << "\r Khepera " << p2d[TheMarkers[i].id-1].idr << " : " << p2d[TheMarkers[i].id-1].x << " m, " << p2d[TheMarkers[i].id-1].y << " m, " << p2d[TheMarkers[i].id-1].theta << " rad" << endl;*/
+//                    cout << "\r [Aruco] marker id= " << p2d[TheMarkers[i].id-1].idr << " : " << p2d[TheMarkers[i].id-1].x << " m, " << p2d[TheMarkers[i].id-1].y << " m, " << p2d[TheMarkers[i].id-1].theta << " rad" << endl;
                 }
                 if(debugwin)
                 {

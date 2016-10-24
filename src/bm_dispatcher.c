@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
+#include "bm_pose2d.h"
 
 /****************************************/
 /****************************************/
@@ -24,24 +26,43 @@ static int done = 0;
  * Active threads
  */
 static int active_threads = 0;
-struct pose2d *p2d;
+pose2d *p2d;
 
-void interceptlocalisation(const uint8_t* data, int msg_len)
+void computeRB(char *Sid, char *Rid, float *range, float *bearing)
 {
+	int SidI = strtol(Sid,NULL,10);
+	int RidI = strtol(Rid,NULL,10);
+	*range = sqrt(pow(p2d[SidI].x-p2d[RidI].x,2)+pow(p2d[SidI].y-p2d[RidI].y,2));
+	*bearing = p2d[SidI].theta-p2d[RidI].theta;
+//        fprintf(stdout, "Sender id: %i - (%.2fm,%.2frad) - Receiver id : %i\n", SidI, *range, *bearing, RidI);
+	return;
+}
 
+void interceptlocalisation(uint8_t* data, int msg_len, float range, float bearing)
+{
+     // Update Buzz neighbors information
+      float elevation = 0;
+      size_t tot = sizeof(uint16_t);
+      memcpy(data + tot, &range, sizeof(float));
+      tot += sizeof(float);
+      memcpy(data + tot, &bearing, sizeof(float));
+      tot += sizeof(float);
+      memcpy(data + tot, &elevation, sizeof(float));
+      return;
 }
 
 void bm_dispatcher_broadcast(bm_dispatcher_t dispatcher,
                              bm_datastream_t stream,
-                             const uint8_t* data) {
+                             uint8_t* data) {
     pthread_mutex_lock(&dispatcher->datamutex);
-//    fprintf(stdout, "Sender id: %s - (%f,%f,%f)", stream->id, p2d[1].x,p2d[1].y,p2d[1].theta);
    bm_datastream_t cur = dispatcher->streams;
    ssize_t sent;
+   float range=0,bearing=0;
    while(cur) {
-       fprintf(stdout, "Receiver id : %s\n", cur->id);
       if(cur != stream){
-	interceptlocalisation(data, dispatcher->msg_len);
+	computeRB(stream->id, cur->id, &range, &bearing);
+//        fprintf(stdout, "Sender id: %s - (%.2fm,%.2frad) - Receiver id : %s\n", stream->id, range, bearing, cur->id);
+	interceptlocalisation(data, dispatcher->msg_len, range, bearing);
          sent = cur->send(cur, data, dispatcher->msg_len);
 	}
       if(sent < dispatcher->msg_len) {
@@ -104,9 +125,9 @@ void* bm_dispatcher_thread(void* arg) {
 /****************************************/
 /****************************************/
 
-bm_dispatcher_t bm_dispatcher_new(struct pose2d *p) {
+bm_dispatcher_t bm_dispatcher_new(void *p) {
+   p2d = (pose2d *) p;
    bm_dispatcher_t d = (bm_dispatcher_t)malloc(sizeof(struct bm_dispatcher_s));
-   p2d = p;
    d->streams = NULL;
    d->stream_num = 0;
    d->start = 0;

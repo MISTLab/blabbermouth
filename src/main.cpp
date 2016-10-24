@@ -8,11 +8,6 @@ extern "C" {
 #include "bm_aruco2.h"
 //#include "bm_bt_datastream.h"
 
-pose2d p2d[10];
-MarkerDetector MDetector;
-VideoCapture TheVideoCapturer;
-CameraParameters TheCameraParameters;
-
 /****************************************/
 /****************************************/
 
@@ -87,9 +82,9 @@ int file_parse(const char* fn,
    return 1;
 }
 
-void resetposes()
+void resetposes(pose2d *p2d, int len)
 {
-    for(int i=0;i<10;i++)
+    for(int i=0;i<len;i++)
     {
         p2d[i].idr=i+1;p2d[i].x=0;p2d[i].y=0;p2d[i].theta=0;
     }
@@ -100,7 +95,14 @@ void resetposes()
 
 int main(int argc, char* argv[]) {
     Mat TheInputImage;
-    resetposes();
+    int nTags = 0, nStreams = 0;
+    pose2d p2d[10];
+    resetposes(p2d, 10);
+    pose2d *poseBlock = p2d;
+    MarkerDetector MDetector;
+    VideoCapture TheVideoCapturer;
+    CameraParameters TheCameraParameters;
+
     // read camera parameters if passed
     TheCameraParameters.readFromXMLFile("camera.yml");
     if (TheCameraParameters.isValid())
@@ -151,7 +153,7 @@ int main(int argc, char* argv[]) {
    else {
       // Streaming mode
       // Create the stream dispatcher
-      bm_dispatcher_t d = bm_dispatcher_new(p2d);
+      bm_dispatcher_t d = bm_dispatcher_new(poseBlock);
       // Parse the arguments
       for(int i = 1; i < argc; ++i) {
          // Check options
@@ -196,6 +198,7 @@ int main(int argc, char* argv[]) {
          else {
              // Not an option, consider it a stream descriptor
              bm_dispatcher_stream_add(d, argv[i]);
+	     nStreams+=1;
          }
       }
       // Make sure required information has been passed
@@ -208,6 +211,8 @@ int main(int argc, char* argv[]) {
        // Set signal handlers
        signal(SIGTERM, sighandler);
        signal(SIGINT, sighandler);
+       while(nTags<nStreams)
+	    getposes(MDetector, TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 0);
        // Start all threads
        pthread_mutex_lock(&d->startmutex);
        d->start = 1;
@@ -216,8 +221,8 @@ int main(int argc, char* argv[]) {
        // Wait for done signal
        ////////// GO !!!!
        do {
-           getposes(MDetector, TheVideoCapturer, TheCameraParameters, TheMarkerSize, p2d, 0);
-           cout << "\r Khepera " << p2d[1].idr << " : " << p2d[1].x << " m, " << p2d[1].y << " m, " << p2d[1].theta << " rad" << endl;
+           getposes(MDetector, TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 0);
+//           cout << "\r Khepera " << p2d[1].idr << " : " << p2d[1].x << " m, " << p2d[1].y << " m, " << p2d[1].theta << " rad" << endl;
            pthread_mutex_lock(&d->startmutex);
            if(getactivet() == 0) setdone(1);
            pthread_mutex_unlock(&d->startmutex);
