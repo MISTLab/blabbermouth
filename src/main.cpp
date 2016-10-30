@@ -99,12 +99,13 @@ int main(int argc, char* argv[]) {
     pose2d p2d[10];
     resetposes(p2d, 10);
     pose2d *poseBlock = p2d;
-    MarkerDetector MDetector;
     VideoCapture TheVideoCapturer;
     CameraParameters TheCameraParameters;
+    KalmanFilter KFangles[10];
+    float dt = 70.0/1000.0;
 
     // read camera parameters if passed
-    TheCameraParameters.readFromXMLFile("camera.yml");
+    TheCameraParameters.readFromXMLFile("camera.xml");
     if (TheCameraParameters.isValid())
         cout << "Got 3D camera calibration." << endl;
     float TheMarkerSize = 0.1;
@@ -129,11 +130,21 @@ int main(int argc, char* argv[]) {
     TheVideoCapturer >> TheInputImage;
     if (TheCameraParameters.isValid())
         TheCameraParameters.resize(TheInputImage.size());
-    
-    MDetector.setDictionary(Dictionary::getTypeFromString("ARUCO"));//sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
-    MDetector.setThresholdParams(7, 7);
-    MDetector.setThresholdParamRange(2, 0);
-    
+    for(int i = 0; i < 10; i++)
+    {
+	KFangles[i].init(3, 1, 0);
+	// intialization of KF for kinematic system
+	KFangles[i].transitionMatrix = *(Mat_<float>(3, 3) << 1,dt,dt/2,   0,1,dt,  0,0,1);
+	cout << KFangles[i].measurementMatrix.size() << endl;
+	// we measure position and accel.
+	KFangles[i].measurementMatrix = *(Mat_<float>(1, 3) << 1,0,0);
+	//discrete prediction noise model
+	KFangles[i].processNoiseCov = *(Mat_<float>(3, 3) << pow(dt,5)/20,pow(dt,4)/8,pow(dt,3)/6,   pow(dt,4)/8,pow(dt,3)/3,pow(dt,2)/2,  pow(dt,3)/6,pow(dt,2)/2,dt);
+	// 
+	KFangles[i].measurementNoiseCov = *(Mat_<float>(1, 1) << 10);
+	setIdentity(KFangles[i].errorCovPost, Scalar::all(0.1));
+    }
+
    // Check whether arguments have been given
    if(argc < 2) {
       usage(stdout, argv[0]);
@@ -211,8 +222,10 @@ int main(int argc, char* argv[]) {
        // Set signal handlers
        signal(SIGTERM, sighandler);
        signal(SIGINT, sighandler);
-       while(nTags<nStreams)
-	    getposes(MDetector, TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 0);
+/*       while(nTags<nStreams){
+	    getposes(TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 1);
+            cv::waitKey(100); // wait for key to be pressed
+	}*/
        // Start all threads
        pthread_mutex_lock(&d->startmutex);
        d->start = 1;
@@ -221,9 +234,17 @@ int main(int argc, char* argv[]) {
        // Wait for done signal
        ////////// GO !!!!
        do {
-           getposes(MDetector, TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 0);
-//           cout << "\r Khepera " << p2d[1].idr << " : " << p2d[1].x << " m, " << p2d[1].y << " m, " << p2d[1].theta << " rad" << endl;
-           pthread_mutex_lock(&d->startmutex);
+           getposes(TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, KFangles, 1);
+	   for(int i =0; i < 10; i++)
+	   {
+		 // KF predict, to update the internal statePre variable
+	    	KFangles[i].predict();
+	    	// KF update
+            	Mat angtmp = KFangles[i].correct(*(Mat_<float>(1, 1) << poseBlock[i].theta));
+                cout << "\r Khepera " << p2d[i].idr << " : " << p2d[i].x << " m, " << p2d[i].y << " m, " << p2d[i].theta << " (" << angtmp.at<float>(0,0) << ") rad" << endl;
+           	p2d[i].theta=angtmp.at<float>(0,0);
+	   }
+	   pthread_mutex_lock(&d->startmutex);
            if(getactivet() == 0) setdone(1);
            pthread_mutex_unlock(&d->startmutex);
            key = cv::waitKey(waitTime); // wait for key to be pressed

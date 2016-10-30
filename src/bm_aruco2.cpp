@@ -13,10 +13,15 @@ cv::Mat resize(const cv::Mat &in,int width){
     
 }
 
-int getposes(MarkerDetector MDetector, VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, int debugwin) {
+int getposes(VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, KalmanFilter KF[10], int debugwin) {
+    MarkerDetector MDetector;
     Mat TheInputImage, TheInputImageCopy;
     Mat rotation;float angle;
     vector< Marker > TheMarkers;
+    MDetector.setDictionary(Dictionary::getTypeFromString("ARUCO"));//sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
+    MDetector.setThresholdParams(7, 7);
+    MDetector.setThresholdParamRange(2, 0);
+
     try {
         
         //gui requirements : the trackbars to change this parameters

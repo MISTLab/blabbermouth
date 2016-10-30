@@ -28,12 +28,18 @@ static int done = 0;
 static int active_threads = 0;
 pose2d *p2d;
 
+int sgn(float x) {
+	return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
+}
+
 void computeRB(char *Sid, char *Rid, float *range, float *bearing)
 {
-	int SidI = strtol(Sid,NULL,10);
-	int RidI = strtol(Rid,NULL,10);
+	int SidI = strtol(Sid,NULL,10)-1;	//K01 to K10
+	int RidI = strtol(Rid,NULL,10)-1;
 	*range = sqrt(pow(p2d[SidI].x-p2d[RidI].x,2)+pow(p2d[SidI].y-p2d[RidI].y,2));
 	*bearing = p2d[SidI].theta-p2d[RidI].theta;
+	if(fabsf(*bearing)>3.1416)
+		*bearing=sgn(*bearing)*(3.1416-fabsf(*bearing));
 //        fprintf(stdout, "Sender id: %i - (%.2fm,%.2frad) - Receiver id : %i\n", SidI, *range, *bearing, RidI);
 	return;
 }
@@ -61,7 +67,7 @@ void bm_dispatcher_broadcast(bm_dispatcher_t dispatcher,
    while(cur) {
       if(cur != stream){
 	computeRB(stream->id, cur->id, &range, &bearing);
-//        fprintf(stdout, "Sender id: %s - (%.2fm,%.2frad) - Receiver id : %s\n", stream->id, range, bearing, cur->id);
+//        fprintf(stdout, "Sender id: %i - (%.2fm,%.2frad) - Receiver id : %i\n", strtol(stream->id,NULL,10), range, bearing, strtol(cur->id,NULL,10));
 	interceptlocalisation(data, dispatcher->msg_len, range, bearing);
          sent = cur->send(cur, data, dispatcher->msg_len);
 	}
