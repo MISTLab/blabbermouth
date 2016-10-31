@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
+    message(FATAL "Require gcc-4.x")
+endif()
 
 # Set module directory
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
