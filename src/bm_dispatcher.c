@@ -191,7 +191,8 @@ int bm_dispatcher_stream_add(bm_dispatcher_t d,
       return 0;
    }
     // Make sure id has not been already used
-   for(bm_datastream_t cur = d->streams;
+   bm_datastream_t cur;
+   for(cur = d->streams;
        cur != NULL;
        cur = cur->next) {
       if(strcmp(tok, cur->id) == 0) {

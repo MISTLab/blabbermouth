@@ -12,7 +12,7 @@ find_package(aruco REQUIRED )
 # Compilation flags
 #include_directories(${PTHREADS_INCLUDE_DIR} ${BLUEZ_INCLUDE_DIRS})
 include_directories(${PTHREADS_INCLUDE_DIR})
-add_definitions(-Wall ${PTHREADS_DEFINITIONS})
+add_definitions(-Wall -std=c++11 ${PTHREADS_DEFINITIONS})
 
 # Target compilation
 add_executable(blabbermouth

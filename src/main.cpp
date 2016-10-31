@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
     // read camera parameters if passed
     TheCameraParameters.readFromXMLFile("camera.xml");
     if (TheCameraParameters.isValid())
-        cout << "Got 3D camera calibration." << endl;
+        printf("Got 3D camera calibration.\n");
     float TheMarkerSize = 0.1;
     
     ///////////  OPEN VIDEO
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
     int vIdx = 0, key =0;
     int waitTime = 1;
     try {
-        cout << "Opening camera index " << vIdx << endl;
+        printf("Opening camera index %i\n", vIdx);
     TheVideoCapturer.open(vIdx);
     
     // check video is open
