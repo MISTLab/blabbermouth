@@ -15,7 +15,7 @@ find_package(aruco REQUIRED )
 # Compilation flags
 #include_directories(${PTHREADS_INCLUDE_DIR} ${BLUEZ_INCLUDE_DIRS})
 include_directories(${PTHREADS_INCLUDE_DIR})
-add_definitions(-Wall -std=c++11 ${PTHREADS_DEFINITIONS})
+add_definitions(-Wall -std=c++11 -fopenmp -Wno-long-long -ffunction-sections -std=c++11 -fomit-frame-pointer -O3 -ffast-math -mmmx -msse -msse2 -msse3 ${PTHREADS_DEFINITIONS})
 
 # Target compilation
 add_executable(blabbermouth
@@ -23,8 +23,10 @@ add_executable(blabbermouth
   bm_aruco2.h bm_aruco2.cpp
   bm_tcp_datastream.h bm_tcp_datastream.c
   bm_dispatcher.h bm_dispatcher.c
+#  test.cpp)
   main.cpp)
 #  bm_bt_datastream.h bm_bt_datastream.c
+#add_executable(blabbermouth test.cpp)
 target_link_libraries(blabbermouth
   ${aruco_LIBS}
   ${PTHREADS_LIBRARY})

@@ -13,7 +13,7 @@ cv::Mat resize(const cv::Mat &in,int width){
     
 }
 
-int getposes(VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, KalmanFilter KF[10], int debugwin) {
+int getposes(VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, int debugwin) {
     MarkerDetector MDetector;
     Mat TheInputImage, TheInputImageCopy;
     Mat rotation;float angle;

@@ -14,6 +14,6 @@
 using namespace cv;
 using namespace aruco;
 
-int getposes(VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, KalmanFilter KF[10], int debugwin);
+int getposes(VideoCapture TheVideoCapturer, CameraParameters TheCameraParameters, float TheMarkerSize, pose2d *p2d, int *nTags, int debugwin);
 
 #endif

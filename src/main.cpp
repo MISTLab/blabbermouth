@@ -94,57 +94,41 @@ void resetposes(pose2d *p2d, int len)
 /****************************************/
 
 int main(int argc, char* argv[]) {
-    Mat TheInputImage;
-    int nTags = 0, nStreams = 0;
+    cv::Mat TheInputImage;
+    int nTags = 0, nStreams = 0, key = 0, waitTime = 1;
     pose2d p2d[10];
     resetposes(p2d, 10);
     pose2d *poseBlock = p2d;
-    VideoCapture TheVideoCapturer;
-    CameraParameters TheCameraParameters;
+    aruco::CameraParameters TheCameraParameters;
     KalmanFilter KFangles[10];
     float dt = 70.0/1000.0;
+    float TheMarkerSize = 0.1;
 
+    // Open input and read image
+    VideoCapture TheVideoCapturer(0);
+    if (TheVideoCapturer.isOpened()) TheVideoCapturer >> TheInputImage;
+    else{cerr<<"Could not open input"<<endl;return -1;}
     // read camera parameters if passed
     TheCameraParameters.readFromXMLFile("camera.xml");
-    if (TheCameraParameters.isValid())
+    if (TheCameraParameters.isValid()) {
         printf("Got 3D camera calibration.\n");
-    float TheMarkerSize = 0.1;
-    
-    ///////////  OPEN VIDEO
-    // read from camera or from  file
-    int vIdx = 0, key =0;
-    int waitTime = 1;
-    try {
-        printf("Opening camera index %i\n", vIdx);
-    TheVideoCapturer.open(vIdx);
-    
-    // check video is open
-    if (!TheVideoCapturer.isOpened())  throw std::runtime_error("Could not open video");
-    }
-    catch(exception e){
-        
-    }
-    
-    ///// CONFIGURE DATA
-    // read first image to get the dimensions
-    TheVideoCapturer >> TheInputImage;
-    if (TheCameraParameters.isValid())
         TheCameraParameters.resize(TheInputImage.size());
-    for(int i = 0; i < 10; i++)
+    }
+
+/*    for(int i = 0; i < 10; i++)
     {
 	KFangles[i].init(3, 1, 0);
 	// intialization of KF for kinematic system
-	KFangles[i].transitionMatrix = *(Mat_<float>(3, 3) << 1,dt,dt/2,   0,1,dt,  0,0,1);
+	KFangles[i].transitionMatrix = *(Mat_float>(3, 3) << 1,dt,dt/2,   0,1,dt,  0,0,1);
 	cout << KFangles[i].measurementMatrix.size() << endl;
 	// we measure position and accel.
 	KFangles[i].measurementMatrix = *(Mat_<float>(1, 3) << 1,0,0);
 	//discrete prediction noise model
 	KFangles[i].processNoiseCov = *(Mat_<float>(3, 3) << pow(dt,5)/20,pow(dt,4)/8,pow(dt,3)/6,   pow(dt,4)/8,pow(dt,3)/3,pow(dt,2)/2,  pow(dt,3)/6,pow(dt,2)/2,dt);
-	// 
 	KFangles[i].measurementNoiseCov = *(Mat_<float>(1, 1) << 10);
 	setIdentity(KFangles[i].errorCovPost, Scalar::all(0.1));
     }
-
+*/
    // Check whether arguments have been given
    if(argc < 2) {
       usage(stdout, argv[0]);
@@ -234,8 +218,8 @@ int main(int argc, char* argv[]) {
        // Wait for done signal
        ////////// GO !!!!
        do {
-           getposes(TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, KFangles, 1);
-	   for(int i =0; i < 10; i++)
+           getposes(TheVideoCapturer, TheCameraParameters, TheMarkerSize, poseBlock, &nTags, 1);
+/*	   for(int i =0; i < 10; i++)
 	   {
 		 // KF predict, to update the internal statePre variable
 	    	KFangles[i].predict();
@@ -244,7 +228,7 @@ int main(int argc, char* argv[]) {
                 cout << "\r Khepera " << p2d[i].idr << " : " << p2d[i].x << " m, " << p2d[i].y << " m, " << p2d[i].theta << " (" << angtmp.at<float>(0,0) << ") rad" << endl;
            	p2d[i].theta=angtmp.at<float>(0,0);
 	   }
-	   pthread_mutex_lock(&d->startmutex);
+*/	   pthread_mutex_lock(&d->startmutex);
            if(getactivet() == 0) setdone(1);
            pthread_mutex_unlock(&d->startmutex);
            key = cv::waitKey(waitTime); // wait for key to be pressed
