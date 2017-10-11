@@ -102,8 +102,20 @@ void DB_unpack(char* pData)
 		ID= strtol(szName+2,NULL,10);// Decided by the name gived to the regidbody
 		//memcpy(&ID, ptr, 4);
 		ptr += 4;
-
-
+	
+		/*
+		for(int i = 0; i < nDataBytes; i++){
+		  printf("\n(%d) c: %c ", i, szName[i]); 
+		}
+		printf("---: %d\n", ID);
+		*/
+		
+		char subbuff[2];
+		memcpy( subbuff, &szName[nDataBytes - 2], 2 );
+		int khepera_id = strtol(subbuff, NULL, 10);
+  
+		//printf(".............................. %d ", khepera_id);
+		  
 		float yaw = 0;
 		memcpy(&yaw, ptr, 4);
 		ptr += 4;
@@ -116,11 +128,12 @@ void DB_unpack(char* pData)
 		memcpy(&aby, ptr, 4);
 		ptr += 4;
 
+		//printf("(ID: %d): %f, %f, %f \n", ID, abx, aby, yaw);
 
-		pose_opt[ID].theta=yaw;
-		pose_opt[ID].x=abx; 
-		pose_opt[ID].y=aby;
-		pose_opt[ID].idr=ID;
+		pose_opt[khepera_id].theta=yaw;
+		pose_opt[khepera_id].x=abx; 
+		pose_opt[khepera_id].y=aby;
+		pose_opt[khepera_id].idr=khepera_id;
 
 	}
 

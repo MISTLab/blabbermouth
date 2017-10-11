@@ -1,0 +1,3 @@
+/home/ivan/git/bm_optitrack/build/CMakeFiles/edit_cache.dir
+/home/ivan/git/bm_optitrack/build/CMakeFiles/rebuild_cache.dir
+/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir

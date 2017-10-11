@@ -68,7 +68,7 @@ int bm_tcp_datastream_parse(bm_tcp_datastream_t ds,
       return 0;
    }
    ds->server = strdup(tok);
-   /* Get port */
+   /* Get range and bearing port*/
    tok = strtok_r(NULL, ":", &saveptr);
    if(!tok) {
       bm_datastream_set_status(ds,
@@ -79,6 +79,8 @@ int bm_tcp_datastream_parse(bm_tcp_datastream_t ds,
       return 0;
    }
    ds->port = strdup(tok);
+   /* Get range and bearing port*/
+   tok = strtok_r(NULL, ":", &saveptr);
    /* Cleanup */
    free(wdesc);
    /* All is OK */
@@ -179,10 +181,7 @@ ssize_t bm_tcp_datastream_send(void* ds,
       sent = send(this->stream, data, tot, 0);
       if(sent < 0) {
          bm_tcp_datastream_disconnect(this);
-         bm_datastream_set_status(this,
-                                  BM_DATASTREAM_ERROR,
-                                  "Error sending data: %s",
-                                  strerror(errno));
+         bm_datastream_set_status(this, BM_DATASTREAM_ERROR, "Error sending data: %s", strerror(errno));
          return sent;
       }
       tot -= sent;

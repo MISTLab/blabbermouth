@@ -15,7 +15,7 @@ struct bm_tcp_datastream_s {
    int stream;
    /* Server */
    char* server;
-   /* Port */
+   /* Port for relative positioning*/
    char* port;
 };
 typedef struct bm_tcp_datastream_s* bm_tcp_datastream_t;
