@@ -111,7 +111,7 @@ void DB_unpack(char* pData)
 		*/
 		
 		char subbuff[2];
-		memcpy( subbuff, &szName[nDataBytes - 2], 2 );
+		memcpy( subbuff, &szName[nDataBytes - 3], 2 );
 		int khepera_id = strtol(subbuff, NULL, 10);
   
 		//printf(".............................. %d ", khepera_id);

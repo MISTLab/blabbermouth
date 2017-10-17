@@ -64,6 +64,7 @@ int file_parse(const char* fn,
       /* Make sure the line is not empty or a comment */
       if(*start != '\0' && *start != '#') {
          /* Trim trailing whitespace */
+	 
          end = start + strlen(start) - 1;
          while(end != start && isspace(*end)) --end;
          *(end+1) = '\0';

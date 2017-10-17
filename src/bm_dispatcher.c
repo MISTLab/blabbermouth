@@ -71,75 +71,6 @@ void computeRB ( char *Sid, char *Rid, float *range, float *bearing )
 	fprintf(stdout, "dely: %.2f  delx: %.2f; delTheta: %.2fdegrees; ReceiverDegreees: %.2f; bearing: %.2f degrees\n", dely, delx, delTheta*180/3.14,p2d[RidI].theta*180/3.14, *bearing*180/3.14);}*/
 //return;
 
-void construct_package(uint8_t* data, int msg_len, int msg_type_param, int rid, float pos_param1, float pos_param2, float pos_param3){	
-  size_t shift = sizeof ( uint16_t );
-  memcpy ( data + shift, &msg_type_param, sizeof ( int ) );
-  shift += sizeof( int );
-  memcpy ( data + shift, &pos_param1, sizeof ( float ) );
-  shift += sizeof ( float );
-  memcpy ( data + shift, &pos_param2, sizeof ( float ) );
-  shift += sizeof ( float );
-  memcpy ( data + shift, &pos_param3, sizeof ( float ) );
-  shift += sizeof ( float );
-  memcpy ( data + shift, &rid, sizeof ( int ) );
-  return;
-}
-
-void interceptlocalisation ( uint8_t* data, int msg_len, float range, float bearing )
-{
-    // Update Buzz neighbors information
-    float elevation = 0;
-    size_t tot = sizeof ( uint16_t );
-    memcpy ( data + tot, &range, sizeof ( float ) );
-    tot += sizeof ( float );
-    memcpy ( data + tot, &bearing, sizeof ( float ) );
-    tot += sizeof ( float );
-    memcpy ( data + tot, &elevation, sizeof ( float ) );
-    return;
-}
-
-void bm_dispatcher_absolute_position ( bm_dispatcher_t dispatcher, bm_datastream_t stream, uint8_t* data )
-{
-    pthread_mutex_lock ( &dispatcher->datamutex );
-    bm_datastream_t cur = dispatcher->streams;
-    ssize_t sent;
-
-    p2d = pose_opt;
-    
-    while ( cur ) {
-	char subbuff[2];
-	memcpy( subbuff, &stream->id[1], 2 );
-	int khepera_id = strtol(subbuff, NULL, 10);
-
-        float x = pose_opt[khepera_id].x;
-        float y = pose_opt[khepera_id].y;
-        float theta = pose_opt[khepera_id].theta;
-
-	construct_package(data, dispatcher->msg_len, ABS_POS_PACKAGE, khepera_id, x, y, theta);
-	/*
-	size_t tot = sizeof ( uint16_t );
-	memcpy ( data + tot, &ABS_POS_PACKAGE, sizeof ( float ) );
-	tot += sizeof( int );
-	memcpy ( data + tot, &x, sizeof ( float ) );
-	tot += sizeof ( float );
-	memcpy ( data + tot, &y, sizeof ( float ) );
-	tot += sizeof ( float );
-	memcpy ( data + tot, &theta, sizeof ( float ) );
-	*/
-
-        printf ( "Values (%s, %d): %f, %f, %f \n ", stream->id, khepera_id, x, y, theta );
-	
-        sent = cur->send ( cur, data, dispatcher->msg_len );
-
-        if ( sent < dispatcher->msg_len ) {
-            fprintf ( stderr, "sent %zd bytes instead of %zu to %s: %s\n", sent, dispatcher->msg_len, cur->descriptor, 
-		      cur->status_desc );
-        }
-        cur = cur->next;
-    }
-    pthread_mutex_unlock ( &dispatcher->datamutex );
-}
-
 
 void bm_dispatcher_broadcast ( bm_dispatcher_t dispatcher,
                                bm_datastream_t stream,
@@ -150,27 +81,62 @@ void bm_dispatcher_broadcast ( bm_dispatcher_t dispatcher,
     pthread_mutex_lock ( &dispatcher->datamutex );
     bm_datastream_t cur = dispatcher->streams;
     ssize_t sent;
+    
+     p2d = pose_opt;
+    
     float range=0,bearing=0;
     while ( cur ) {
-        if ( cur != stream ) {
+        //if ( cur != stream ) {
             //printf("Now is in broadcast function and before server\n");
+    
+	    char subbuff[2];
+	    memcpy( subbuff, &stream->id[1], 2 );
+	    int khepera_id = strtol(subbuff, NULL, 10);
+	    
+	    //printf("Khepera_id: %d", khepera_id);
 
+	    float x = pose_opt[khepera_id].x;
+	    float y = pose_opt[khepera_id].y;
+	    float theta = pose_opt[khepera_id].theta;
+	    float angle = 0.0;
+      
             computeRB ( stream->id, cur->id, &range, &bearing );
+	    
             //fprintf(stdout, "Sender id: %d - (%.2fm,%.2frad) - Receiver id : %d\n", stream->id, range, bearing, cur->id);
             //if distance between two robots is out of range, do not send
-            if ( range<=Communication_Range ) {
-                //interceptlocalisation ( data, dispatcher->msg_len, range, bearing );
-		construct_package(data, dispatcher->msg_len, RAB_PACKAGE, -1, range, bearing, 0);
+            //if ( range<=Communication_Range ) {
+                //construct_package ( data, dispatcher->msg_len, RAB_PACKAGE, -1, range, bearing, 0 );
+
+                size_t shift = sizeof ( uint16_t );
+                memcpy ( data + shift, &range, sizeof ( float ) );
+                shift += sizeof ( float );
+                memcpy ( data + shift, &bearing, sizeof ( float ) );
+                shift += sizeof ( float );
+                memcpy ( data + shift, &angle, sizeof ( float ) );
+                shift += sizeof ( float );
+		
+                memcpy ( data + shift, &khepera_id, sizeof ( int ) );
+		shift += sizeof ( int );
+                memcpy ( data + shift, &x, sizeof ( float ) );
+                shift += sizeof ( float );
+                memcpy ( data + shift, &y, sizeof ( float ) );
+                shift += sizeof ( float );
+                memcpy ( data + shift, &theta, sizeof ( float ) );
+		
+		printf("Khepera (%d): %f, %f", khepera_id, x, y);
+                
+		
                 sent = cur->send ( cur, data, dispatcher->msg_len );
-            }
+            //}
             if ( sent < dispatcher->msg_len ) {
-                fprintf ( stderr, "sent %zd bytes instead of %zu to %s: %s\n",
+                fprintf ( stderr,
+                          "sent %zd bytes instead of %zu to %s: %s\n",
                           sent,
                           dispatcher->msg_len,
                           cur->descriptor,
                           cur->status_desc );
             }
-        }
+        //}
         // printf("Now is after computerRB***sender ID: %d***\n", SidI);
         cur = cur->next;
 
@@ -193,7 +159,9 @@ typedef struct bm_dispatcher_thread_data_s* bm_dispatcher_thread_data_t;
 void* bm_dispatcher_thread ( void* arg )
 {
     /* Get thread data */
+    
     bm_dispatcher_thread_data_t data = ( bm_dispatcher_thread_data_t ) arg;
+    
     /* Wait for start signal */
     pthread_mutex_lock ( &data->dispatcher->startmutex );
     ++active_threads;
@@ -204,7 +172,7 @@ void* bm_dispatcher_thread ( void* arg )
     /* Execute logic */
     uint8_t* buf = ( uint8_t* ) calloc ( data->dispatcher->msg_len, 1 );
     //for counting  in while
-    int count=0;
+    //int count=0;
     while ( !done ) {
         /* Receive data */
         if ( data->stream->recv ( data->stream,
@@ -224,7 +192,7 @@ void* bm_dispatcher_thread ( void* arg )
         /* Broadcast data */
         bm_dispatcher_broadcast(data->dispatcher, data->stream, buf);
 	// add absolute position
-        bm_dispatcher_absolute_position ( data->dispatcher, data->stream, buf );
+        //bm_dispatcher_absolute_position ( data->dispatcher, data->stream, buf );
     }
     /* All done */
     pthread_mutex_lock ( &data->dispatcher->startmutex );
@@ -345,9 +313,9 @@ int bm_dispatcher_stream_add ( bm_dispatcher_t d,
         return 0;
     }
     /* Add a thread dedicated to this stream */
-    bm_dispatcher_thread_data_t info =
-        ( bm_dispatcher_thread_data_t ) malloc (
-            sizeof ( struct bm_dispatcher_thread_data_s ) );
+    
+    bm_dispatcher_thread_data_t info = ( bm_dispatcher_thread_data_t ) malloc (sizeof ( struct bm_dispatcher_thread_data_s ) );
+	
     info->dispatcher = d;
     info->stream = stream;
     if ( pthread_create ( &stream->thread, NULL, &bm_dispatcher_thread, info ) != 0 ) {
