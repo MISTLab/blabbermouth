@@ -6,31 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/ivan/git/bm_optitrack/src/bm_bt_datastream.c
-bm_bt_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_bt_datastream.h
-stdio.h
--
-stdlib.h
--
-string.h
--
-unistd.h
--
-sys/socket.h
--
-bluetooth/bluetooth.h
--
-bluetooth/hci.h
--
-bluetooth/hci_lib.h
--
-
-/home/ivan/git/bm_optitrack/src/bm_bt_datastream.h
-bm_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_datastream.h
-
-/home/ivan/git/bm_optitrack/src/bm_datastream.c
+/home/dave/Downloads/bm_optitrack/src/bm_datastream.c
 stdio.h
 -
 stdarg.h
@@ -38,9 +14,9 @@ stdarg.h
 string.h
 -
 bm_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_datastream.h
 
-/home/ivan/git/bm_optitrack/src/bm_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_datastream.h
 inttypes.h
 -
 stdlib.h
@@ -48,11 +24,11 @@ stdlib.h
 pthread.h
 -
 
-/home/ivan/git/bm_optitrack/src/bm_dispatcher.c
+/home/dave/Downloads/bm_optitrack/src/bm_dispatcher.c
 bm_dispatcher.h
-/home/ivan/git/bm_optitrack/src/bm_dispatcher.h
+/home/dave/Downloads/bm_optitrack/src/bm_dispatcher.h
 bm_tcp_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_tcp_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_tcp_datastream.h
 stdio.h
 -
 stdlib.h
@@ -68,17 +44,17 @@ signal.h
 unistd.h
 -
 server.h
-/home/ivan/git/bm_optitrack/src/server.h
+/home/dave/Downloads/bm_optitrack/src/server.h
 bm_pose2d.h
-/home/ivan/git/bm_optitrack/src/bm_pose2d.h
+/home/dave/Downloads/bm_optitrack/src/bm_pose2d.h
 
-/home/ivan/git/bm_optitrack/src/bm_dispatcher.h
+/home/dave/Downloads/bm_optitrack/src/bm_dispatcher.h
 bm_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_datastream.h
 
-/home/ivan/git/bm_optitrack/src/bm_pose2d.h
+/home/dave/Downloads/bm_optitrack/src/bm_pose2d.h
 
-/home/ivan/git/bm_optitrack/src/bm_tcp_datastream.c
+/home/dave/Downloads/bm_optitrack/src/bm_tcp_datastream.c
 stdio.h
 -
 stdlib.h
@@ -98,13 +74,13 @@ sys/types.h
 sys/socket.h
 -
 bm_tcp_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_tcp_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_tcp_datastream.h
 
-/home/ivan/git/bm_optitrack/src/bm_tcp_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_tcp_datastream.h
 bm_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_datastream.h
 
-/home/ivan/git/bm_optitrack/src/main.c
+/home/dave/Downloads/bm_optitrack/src/main.c
 stdio.h
 -
 string.h
@@ -114,13 +90,11 @@ errno.h
 ctype.h
 -
 bm_dispatcher.h
-/home/ivan/git/bm_optitrack/src/bm_dispatcher.h
-bm_bt_datastream.h
-/home/ivan/git/bm_optitrack/src/bm_bt_datastream.h
+/home/dave/Downloads/bm_optitrack/src/bm_dispatcher.h
 server.h
-/home/ivan/git/bm_optitrack/src/server.h
+/home/dave/Downloads/bm_optitrack/src/server.h
 
-/home/ivan/git/bm_optitrack/src/server.c
+/home/dave/Downloads/bm_optitrack/src/server.c
 stdio.h
 -
 string.h
@@ -134,11 +108,11 @@ arpa/inet.h
 sys/socket.h
 -
 bm_pose2d.h
-/home/ivan/git/bm_optitrack/src/bm_pose2d.h
+/home/dave/Downloads/bm_optitrack/src/bm_pose2d.h
 
-/home/ivan/git/bm_optitrack/src/server.h
+/home/dave/Downloads/bm_optitrack/src/server.h
 bm_pose2d.h
-/home/ivan/git/bm_optitrack/src/bm_pose2d.h
+/home/dave/Downloads/bm_optitrack/src/bm_pose2d.h
 pthread.h
 -
 

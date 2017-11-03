@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ivan/git/bm_optitrack/src
+CMAKE_SOURCE_DIR = /home/dave/Downloads/bm_optitrack/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ivan/git/bm_optitrack/build
+CMAKE_BINARY_DIR = /home/dave/Downloads/bm_optitrack/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ivan/git/bm_optitrack/build/CMakeFiles /home/ivan/git/bm_optitrack/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/Downloads/bm_optitrack/build/CMakeFiles /home/dave/Downloads/bm_optitrack/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ivan/git/bm_optitrack/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/Downloads/bm_optitrack/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -122,33 +122,6 @@ blabbermouth: cmake_check_build_system
 blabbermouth/fast:
 	$(MAKE) -f CMakeFiles/blabbermouth.dir/build.make CMakeFiles/blabbermouth.dir/build
 .PHONY : blabbermouth/fast
-
-bm_bt_datastream.o: bm_bt_datastream.c.o
-
-.PHONY : bm_bt_datastream.o
-
-# target to build an object file
-bm_bt_datastream.c.o:
-	$(MAKE) -f CMakeFiles/blabbermouth.dir/build.make CMakeFiles/blabbermouth.dir/bm_bt_datastream.c.o
-.PHONY : bm_bt_datastream.c.o
-
-bm_bt_datastream.i: bm_bt_datastream.c.i
-
-.PHONY : bm_bt_datastream.i
-
-# target to preprocess a source file
-bm_bt_datastream.c.i:
-	$(MAKE) -f CMakeFiles/blabbermouth.dir/build.make CMakeFiles/blabbermouth.dir/bm_bt_datastream.c.i
-.PHONY : bm_bt_datastream.c.i
-
-bm_bt_datastream.s: bm_bt_datastream.c.s
-
-.PHONY : bm_bt_datastream.s
-
-# target to generate assembly for a file
-bm_bt_datastream.c.s:
-	$(MAKE) -f CMakeFiles/blabbermouth.dir/build.make CMakeFiles/blabbermouth.dir/bm_bt_datastream.c.s
-.PHONY : bm_bt_datastream.c.s
 
 bm_datastream.o: bm_datastream.c.o
 
@@ -294,9 +267,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... blabbermouth"
-	@echo "... bm_bt_datastream.o"
-	@echo "... bm_bt_datastream.i"
-	@echo "... bm_bt_datastream.s"
 	@echo "... bm_datastream.o"
 	@echo "... bm_datastream.i"
 	@echo "... bm_datastream.s"

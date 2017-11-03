@@ -4,12 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/ivan/git/bm_optitrack/src/bm_bt_datastream.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_bt_datastream.c.o"
-  "/home/ivan/git/bm_optitrack/src/bm_datastream.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_datastream.c.o"
-  "/home/ivan/git/bm_optitrack/src/bm_dispatcher.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_dispatcher.c.o"
-  "/home/ivan/git/bm_optitrack/src/bm_tcp_datastream.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_tcp_datastream.c.o"
-  "/home/ivan/git/bm_optitrack/src/main.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/main.c.o"
-  "/home/ivan/git/bm_optitrack/src/server.c" "/home/ivan/git/bm_optitrack/build/CMakeFiles/blabbermouth.dir/server.c.o"
+  "/home/dave/Downloads/bm_optitrack/src/bm_datastream.c" "/home/dave/Downloads/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_datastream.c.o"
+  "/home/dave/Downloads/bm_optitrack/src/bm_dispatcher.c" "/home/dave/Downloads/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_dispatcher.c.o"
+  "/home/dave/Downloads/bm_optitrack/src/bm_tcp_datastream.c" "/home/dave/Downloads/bm_optitrack/build/CMakeFiles/blabbermouth.dir/bm_tcp_datastream.c.o"
+  "/home/dave/Downloads/bm_optitrack/src/main.c" "/home/dave/Downloads/bm_optitrack/build/CMakeFiles/blabbermouth.dir/main.c.o"
+  "/home/dave/Downloads/bm_optitrack/src/server.c" "/home/dave/Downloads/bm_optitrack/build/CMakeFiles/blabbermouth.dir/server.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include "bm_dispatcher.h"
-#include "bm_bt_datastream.h"
+//#include "bm_bt_datastream.h"
 #include "server.h"
 
 /******************main**********************/
@@ -98,8 +98,8 @@ int main(int argc, char* argv[]) {
          return EXIT_FAILURE;
       }
       /* Execute bluetooth scan */
-      if(!bm_bt_scan())
-         return EXIT_FAILURE;
+   //   if(!bm_bt_scan())
+   //      return EXIT_FAILURE;
    }
    else {
       //positiong thread
