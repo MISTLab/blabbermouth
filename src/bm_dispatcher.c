@@ -44,7 +44,11 @@ void computeRB ( char *Sid, char *Rid, float *range, float *bearing )
     //server();
     p2d = pose_opt;
     SidI = strtol ( Sid + 1, NULL, 10 );
+    if(SidI==11)  // for TX1 extension
+      SidI=10;
     RidI = strtol ( Rid + 1, NULL, 10 );
+    if(RidI==11)  // for TX1 extension
+      RidI=10;
     *range = sqrt ( pow ( p2d[SidI].x - p2d[RidI].x, 2 ) + pow ( p2d[SidI].y - p2d[RidI].y, 2 ) );
     float dely = p2d[SidI].y - p2d[RidI].y;
     float delx = p2d[SidI].x - p2d[RidI].x;
